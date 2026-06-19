@@ -17,6 +17,7 @@ const app = express();
 // ✅ CORS SOZLAMALARI - MUHIM!
 const corsOptions = {
     origin: [
+        'https://makon-shop.vercel.app/',  // Production frontend
         'http://localhost:5173',  // Vite frontend
         'http://localhost:3000',  // React default
         process.env.CORS_ORIGIN  // .env dan keladigan URL
