@@ -73,7 +73,6 @@ function App() {
                 />
 
                 {/* Admin routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
                 <Route
                   path="/admin"
                   element={
@@ -82,6 +81,8 @@ function App() {
                     </AdminRoute>
                   }
                 />
+                <Route path="/admin/login" element={<AdminLogin />} />
+
                 <Route
                   path="/admin/equipment"
                   element={
