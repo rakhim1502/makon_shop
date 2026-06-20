@@ -97,6 +97,7 @@ const EditEquipment = () => {
                 },
                 stock: {
                     total: Number(formData.stock.total),
+                    available: Number(formData.stock.total),  
                 },
                 specifications: formData.specifications,
                 status: formData.status,
