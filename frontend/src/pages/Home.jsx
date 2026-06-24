@@ -240,26 +240,91 @@ const Home = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="py-16 md:py-24 bg-gradient-to-br from-primary-800 to-primary-900 text-white">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+            {/* Qanday ishlaydi */}
+            <section className="py-20 px-4 bg-gradient-to-br from-primary-800 to-primary-900 text-white">
+                <div className="max-w-6xl mx-auto">
+                    <motion.h2
+                        className="text-4xl md:text-5xl font-bold text-center mb-4"
+                        initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                            Sayohatingizni bugun boshlang!
+                        3 qadamda ijara oling
+                    </motion.h2>
+                    <p className="text-center text-white/80 mb-16 text-lg">
+                        Oddiy va tezkor jarayon
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                step: '01',
+                                icon: '',
+                                title: 'Jihozni tanlang',
+                                desc: 'Katalogdan kerakli jihozni tanlang va sanalarni belgilang',
+                            },
+                            {
+                                step: '02',
+                                icon: '📝',
+                                title: 'Buyurtma bering',
+                                desc: 'Ma\'lumotlaringizni qoldiring va buyurtmani tasdiqlang',
+                            },
+                            {
+                                step: '03',
+                                icon: '🎒',
+                                title: 'Jihozni oling',
+                                desc: 'Ofisimizdan olib keting yoki yetkazib berishni tanlang',
+                            },
+                        ].map((item, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.2 }}
+                                className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all"
+                            >
+                                <div className="absolute -top-4 -left-4 w-12 h-12 bg-accent-500 rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                                    {item.step}
+                                </div>
+                                <div className="text-5xl mb-4">{item.icon}</div>
+                                <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
+                                <p className="text-white/80">{item.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            {/* FAQ */}
+            <section className="py-16 px-4 bg-white">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-12">
+                        <span className="text-sm font-semibold text-primary-700 uppercase">Tez-tez so'raladigan savollar</span>
+                        <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-2">
+                            FAQ
                         </h2>
-                        <p className="text-lg text-neutral-200 mb-8 max-w-2xl mx-auto">
-                            Ro'yxatdan o'ting va birinchi buyurtmangizga 10% chegirma oling
-                        </p>
-                        <Link
-                            to="/login"
-                            className="inline-block px-8 py-4 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-bold text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105"
-                        >
-                            Hoziroq boshlash →
-                        </Link>
-                    </motion.div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {[
+                            { q: 'Jihozni qanday qilib olish mumkin?', a: 'Buyurtma berganingizdan so\'ng operatorimiz siz bilan bog\'lanadi va jihozni olish vaqtini kelishadi. Ofisimizdan olib ketishingiz yoki yetkazib berish xizmatidan foydalanishingiz mumkin.' },
+                            { q: 'Depozit qancha va qachon qaytariladi?', a: 'Depozit miqdori jihoz turiga qarab belgilanadi. Jihozni qaytarib berganingizdan so\'ng to\'liq qaytariladi (agar shikast yetmagan bo\'lsa).' },
+                            { q: 'Jihoz shikastlansa nima bo\'ladi?', a: 'Kichik shikastlar uchun depozitdan ushlab qolinadi. Katta shikastlar uchun qo\'shimcha to\'lov talab qilinishi mumkin.' },
+                            { q: 'Buyurtmani bekor qilsam bo\'ladimi?', a: 'Ha, buyurtmani boshlanish sanasidan 24 soat oldin bepul bekor qilishingiz mumkin.' },
+                        ].map((item, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-neutral-50 rounded-2xl p-6"
+                            >
+                                <h3 className="font-bold text-neutral-900 mb-2">{item.q}</h3>
+                                <p className="text-neutral-600">{item.a}</p>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             </section>
         </div>
