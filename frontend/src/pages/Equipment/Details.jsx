@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../services/api';
 import { getImageUrl, formatCurrency, formatDate } from '../../utils/helpers';
 import toast from 'react-hot-toast';
@@ -12,6 +12,7 @@ const EquipmentDetails = () => {
     const [loading, setLoading] = useState(true);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0); // ✅ Yangi state
 
     useEffect(() => {
         fetchEquipment();
@@ -22,6 +23,7 @@ const EquipmentDetails = () => {
             setLoading(true);
             const res = await api.get(`/equipment/${id}`);
             setEquipment(res.data.data);
+            setSelectedImageIndex(0); // Rasmni reset qilish
         } catch (error) {
             toast.error('Jihozni yuklashda xatolik');
         } finally {
@@ -35,7 +37,6 @@ const EquipmentDetails = () => {
             return;
         }
 
-        // ✅ Bir xil sana bo'lsa ham bo'ladi (1 kun)
         const start = new Date(startDate);
         const end = new Date(endDate);
 
@@ -65,37 +66,73 @@ const EquipmentDetails = () => {
         );
     }
 
+    // Asosiy rasmni aniqlash
+    const mainImage = equipment.images?.[selectedImageIndex]?.url
+        || equipment.images?.[0]?.url
+        || null;
+
     return (
         <div className="min-h-screen bg-neutral-50 py-12 px-4">
             <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Rasm */}
+                    {/* Rasm qismi */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         className="bg-white rounded-2xl overflow-hidden shadow-soft"
                     >
-                        <img
-                            src={getImageUrl(equipment.images?.[0]?.url)}
-                            alt={equipment.name}
-                            className="w-full h-96 object-cover"
-                            onError={(e) => {
-                                e.target.src = '/placeholder.jpg';
-                            }}
-                        />
-                        {/* Qo'shimcha rasmlar */}
+                        {/* Asosiy rasm - animatsiya bilan */}
+                        <div className="relative h-96 overflow-hidden bg-neutral-100">
+                            <AnimatePresence mode="wait">
+                                <motion.img
+                                    key={selectedImageIndex}
+                                    src={getImageUrl(mainImage)}
+                                    alt={equipment.name}
+                                    className="w-full h-full object-cover"
+                                    initial={{ opacity: 0, scale: 1.05 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    onError={(e) => {
+                                        e.target.src = '/placeholder.jpg';
+                                    }}
+                                />
+                            </AnimatePresence>
+
+                            {/* Rasm ko'rsatkichi */}
+                            {equipment.images?.length > 1 && (
+                                <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                    {selectedImageIndex + 1} / {equipment.images.length}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Thumbnail rasmlar */}
                         {equipment.images?.length > 1 && (
                             <div className="flex gap-2 p-4 overflow-x-auto">
                                 {equipment.images.map((img, index) => (
-                                    <img
+                                    <motion.button
                                         key={index}
-                                        src={getImageUrl(img.url)}
-                                        alt={`${equipment.name} ${index + 1}`}
-                                        className="w-20 h-20 object-cover rounded-lg cursor-pointer hover:opacity-75"
-                                        onError={(e) => {
-                                            e.target.src = '/placeholder.jpg';
-                                        }}
-                                    />
+                                        onClick={() => setSelectedImageIndex(index)}
+                                        className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
+                                                ? 'border-primary-600 shadow-lg scale-105'
+                                                : 'border-transparent opacity-70 hover:opacity-100'
+                                            }`}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        <img
+                                            src={getImageUrl(img.url)}
+                                            alt={`${equipment.name} ${index + 1}`}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                e.target.src = '/placeholder.jpg';
+                                            }}
+                                        />
+                                        {selectedImageIndex === index && (
+                                            <div className="absolute inset-0 bg-primary-600/20" />
+                                        )}
+                                    </motion.button>
                                 ))}
                             </div>
                         )}
@@ -127,7 +164,7 @@ const EquipmentDetails = () => {
                         </div>
 
                         <div className="bg-white rounded-2xl p-6 shadow-soft">
-                            <h2 className="text-xl font-bold mb-4">📅 Ijara sanasi</h2>
+                            <h2 className="text-xl font-bold mb-4"> Ijara sanasi</h2>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-semibold text-neutral-700 mb-2">Boshlanish</label>
@@ -138,7 +175,6 @@ const EquipmentDetails = () => {
                                         onChange={(e) => {
                                             const newStart = e.target.value;
                                             setStartDate(newStart);
-                                            // Agar endDate startDate'dan oldin bo'lsa, endDate'ni yangilash
                                             if (endDate && endDate < newStart) {
                                                 setEndDate(newStart);
                                             }
@@ -151,7 +187,7 @@ const EquipmentDetails = () => {
                                     <input
                                         type="date"
                                         value={endDate}
-                                        min={startDate}  // ✅ Bir xil sanani tanlashga ruxsat beradi
+                                        min={startDate}
                                         onChange={(e) => setEndDate(e.target.value)}
                                         className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:border-primary-600 outline-none"
                                     />
