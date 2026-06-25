@@ -52,7 +52,7 @@ const AdminEquipment = () => {
                         <p className="text-sm md:text-base text-neutral-600 mt-1">Barcha jihozlar ro'yxati</p>
                     </div>
                     <button
-                        onClick={() => navigate('/admin/equipment/new')}
+                        onClick={() => navigate('/admin/equipment/add')}
                         className="w-full sm:w-auto px-4 md:px-6 py-2.5 md:py-3 bg-primary-700 text-white rounded-xl font-semibold hover:bg-primary-800 transition-all shadow-lg text-sm md:text-base"
                     >
                         + Yangi jihoz
